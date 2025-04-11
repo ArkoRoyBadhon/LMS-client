@@ -15,7 +15,10 @@ const enrollmentApi = api.injectEndpoints({
       providesTags: ["enrollment"],
     }),
     singleForUser: builder.query({
-      query: (id) => `/enrollment/single-for-user/${id}`,
+      query: ({ id, search }) =>
+        `/enrollment/single-for-user/${id}?search=${encodeURIComponent(
+          search || ""
+        )}`,
       providesTags: ["enrollment"],
     }),
     nextVideo: builder.mutation({
