@@ -3,12 +3,13 @@ import { useUserPersonalQuery } from "@/lib/features/enrollment/EnrollmentApi";
 import Link from "next/link";
 import Image from "next/image";
 import { ICourse } from "@/Types/EnrollmentType";
+import Loader from "./Loader";
 
 const AllCoursesByUser = () => {
   const { data, isSuccess, isLoading } = useUserPersonalQuery(undefined);
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
 
   if (!isSuccess || !data || data.length === 0) {

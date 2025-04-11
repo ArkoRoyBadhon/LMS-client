@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { BiChevronDown, BiChevronUp, BiSearch } from "react-icons/bi";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import { toast } from "sonner";
+import Loader from "./Loader";
 
 const ProjectViewer = ({ id }: { id: string }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -75,7 +76,7 @@ const ProjectViewer = ({ id }: { id: string }) => {
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loader />;
   if (!isSuccess || !data?.data?.course?.modules)
     return <p>No data available.</p>;
 
