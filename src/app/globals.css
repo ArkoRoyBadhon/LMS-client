@@ -10,6 +10,18 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* custom colors */
+  --color-primary: #0ea5e9;
+  --color-hover: #0284c7;
+  --color-darkest: #0c4a6e;
+  --color-light-accent: #7dd3fc;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-purple: #8b5cf6;
+  --color-text: #f8fafc;
+  --color-muted: #94a3b8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,4 +35,18 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  .mainContainer {
+    @apply max-w-[1440px] mx-auto px-[120px];
+  }
+
+  .smoothy {
+    @apply transition-all ease-in;
+  }
+
+  .navItem {
+    @apply text-[18px] font-semibold hover:text-text;
+  }
 }
