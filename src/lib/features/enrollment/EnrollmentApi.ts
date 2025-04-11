@@ -19,10 +19,9 @@ const enrollmentApi = api.injectEndpoints({
       providesTags: ["enrollment"],
     }),
     nextVideo: builder.mutation({
-      query: ({ id, post }) => ({
+      query: ({ id }) => ({
         url: `/enrollment/next-video/${id}`,
         method: "POST",
-        body: post,
       }),
       invalidatesTags: ["enrollment"],
     }),

@@ -2,6 +2,7 @@
 import { useUserPersonalQuery } from "@/lib/features/enrollment/EnrollmentApi";
 import Link from "next/link";
 import Image from "next/image";
+import { ICourse } from "@/Types/EnrollmentType";
 
 const AllCoursesByUser = () => {
   const { data, isSuccess, isLoading } = useUserPersonalQuery(undefined);
@@ -16,7 +17,7 @@ const AllCoursesByUser = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[20px] py-[20px]">
-      {data.data.map((item: any, index: number) => {
+      {data.data.map((item: ICourse, index: number) => {
         console.log("item", item);
 
         return (
