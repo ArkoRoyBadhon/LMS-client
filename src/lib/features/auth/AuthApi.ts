@@ -28,6 +28,15 @@ const authApi = api.injectEndpoints({
         };
       },
     }),
+    getUser: builder.query({
+      query: () => {
+        return {
+          url: `/auth/get-user`,
+          method: "GET",
+          credentials: "include",
+        };
+      },
+    })
   }),
 });
 
@@ -35,4 +44,5 @@ export const {
   useRegisterMutation,
   useLoginUserMutation,
   useLogoutUserMutation,
+  useGetUserQuery
 } = authApi;

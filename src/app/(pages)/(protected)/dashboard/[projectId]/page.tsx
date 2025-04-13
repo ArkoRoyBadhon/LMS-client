@@ -1,4 +1,4 @@
-import ProjectViewer from "@/components/ProjectViewer";
+import ProjectViewer from "@/components/dashboard/ProjectViewer";
 
 const Page = ({ params }: { params: { projectId: string } }) => {
   return (

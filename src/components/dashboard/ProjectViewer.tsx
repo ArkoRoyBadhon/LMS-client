@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { BiChevronDown, BiChevronUp, BiSearch } from "react-icons/bi";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import { toast } from "sonner";
-import Loader from "./Loader";
+import Loader from "../Loader";
 
 const ProjectViewer = ({ id }: { id: string }) => {
   const [searchTerm, setSearchTerm] = useState("");

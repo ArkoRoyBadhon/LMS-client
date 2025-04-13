@@ -15,9 +15,6 @@ const Header = () => {
             <li className="navItem smoothy">
               <Link href="/courses">Courses</Link>
             </li>
-            <li className="navItem smoothy">
-              <Link href="/contact">Contact</Link>
-            </li>
             <li>
               <HandleLogout />
             </li>
