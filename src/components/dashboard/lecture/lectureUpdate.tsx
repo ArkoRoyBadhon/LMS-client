@@ -6,16 +6,18 @@ import {
   useUpdateLectureMutation,
 } from "@/lib/features/module-lecture/module-lectureApi";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "sonner";
 import * as Yup from "yup";
+import { useMultiUploadFileMutation } from "@/lib/features/file/fileApi";
+import BackButton from "@/components/shared/BackButton";
 
 const LectureUpdate = ({ id }: { id: string }) => {
-  const { data: lecture, isLoading, error } = useGetSingleLectureQuery(id);
-  const [updateLecture] = useUpdateLectureMutation();
   const router = useRouter();
+
+  const { data: lecture, isLoading } = useGetSingleLectureQuery(id);
+  const [updateLecture] = useUpdateLectureMutation();
+  const [multiUploadFile] = useMultiUploadFileMutation();
 
   const validationSchema = Yup.object({
     title: Yup.string()
@@ -24,22 +26,36 @@ const LectureUpdate = ({ id }: { id: string }) => {
     video_url: Yup.string()
       .url("Enter a valid URL")
       .required("Video URL is required"),
-    pdf_urls: Yup.array()
-      .of(Yup.string().url("Enter valid URLs"))
-      .required("At least one PDF URL is required"),
+    pdfs: Yup.array().of(Yup.mixed()),
     isFreePreview: Yup.boolean(),
     isPublished: Yup.boolean(),
   });
 
-  const handleSubmit = async (values: typeof lecture) => {
-    const toastId = toast.loading("Please wait...");
+  const handleSubmit = async (values: typeof initialValues) => {
+    const toastId = toast.loading("Updating lecture...");
     try {
-      const updatedLecture = { ...values, _id: id };
-      await updateLecture(updatedLecture);
+      let pdf_urls = values.pdf_urls || [];
+
+      if (values.pdfs.length > 0) {
+        const formData = new FormData();
+        values.pdfs.forEach((file: File) => formData.append("files", file));
+        const uploadedFiles = await multiUploadFile(formData).unwrap();
+        pdf_urls = [...pdf_urls, ...uploadedFiles.urls];
+      }
+
+      const lectureData = {
+        title: values.title,
+        video_url: values.video_url,
+        isFreePreview: values.isFreePreview,
+        isPublished: values.isPublished,
+        pdf_urls,
+        _id: id,
+      };
+
+      await updateLecture({ id, ...lectureData }).unwrap();
       toast.success("Lecture updated successfully!", { id: toastId });
       router.back();
     } catch {
-      console.error("Error updating lecture:", error);
       toast.error("Failed to update lecture.", { id: toastId });
     }
   };
@@ -51,16 +67,15 @@ const LectureUpdate = ({ id }: { id: string }) => {
   const initialValues = {
     title: lecture?.data?.title || "",
     video_url: lecture?.data?.video_url || "",
-    pdf_urls: lecture?.data?.pdf_urls || [""],
+    pdfs: [],
+    pdf_urls: lecture?.data?.pdf_urls || [],
     isFreePreview: lecture?.data?.isFreePreview || false,
     isPublished: lecture?.data?.isPublished || false,
   };
 
   return (
     <div className="p-6 max-w-md mx-auto bg-white rounded-md shadow-md">
-      <button onClick={() => router.back()}>
-        <FaArrowLeft />
-      </button>
+      <BackButton />
       <h1 className="text-xl mt-2 font-bold mb-4">Update Lecture</h1>
       <Formik
         initialValues={initialValues}
@@ -102,27 +117,61 @@ const LectureUpdate = ({ id }: { id: string }) => {
 
             <div>
               <label className="block text-gray-700 font-medium">
-                PDF URLs
+                Upload New PDFs
               </label>
-              <Field
-                type="text"
-                name="pdf_urls"
-                placeholder="Enter comma-separated URLs"
-                className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-md"
-                value={values.pdf_urls.join(", ")}
-                onChange={(e: { target: { value: string } }) =>
-                  setFieldValue(
-                    "pdf_urls",
-                    e.target.value.split(",").map((url) => url.trim())
-                  )
+              <input
+                type="file"
+                accept=".pdf"
+                multiple
+                onChange={(event) =>
+                  setFieldValue("pdfs", Array.from(event.target.files || []))
                 }
+                className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-md"
               />
               <ErrorMessage
-                name="pdf_urls"
+                name="pdfs"
                 component="div"
                 className="text-red-500 text-sm mt-1"
               />
             </div>
+
+            {values.pdf_urls?.length > 0 && (
+              <div>
+                <h4 className="text-gray-700 font-medium">Existing PDFs</h4>
+                <ul className="space-y-2">
+                  {values.pdf_urls.map((url: string, index: number) => (
+                    <li
+                      key={index}
+                      className="flex justify-between items-center bg-gray-100 px-3 py-2 rounded-md gap-2"
+                    >
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline line-clamp-2"
+                      >
+                        {/* PDF {index + 1} */}
+                        {url}
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFieldValue(
+                            "pdf_urls",
+                            values.pdf_urls.filter(
+                              (_: unknown, i: number) => i !== index
+                            )
+                          )
+                        }
+                        className="text-red-500 hover:text-red-700 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <div className="flex items-center">
               <Field type="checkbox" name="isFreePreview" className="mr-2" />

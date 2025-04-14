@@ -1,22 +1,24 @@
 "use client";
 import React from "react";
-import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { toast } from "sonner";
 import { useCreateLectureMutation } from "@/lib/features/module-lecture/module-lectureApi";
 import { useRouter } from "next/navigation";
-import { FaArrowLeft } from "react-icons/fa";
+import { useMultiUploadFileMutation } from "@/lib/features/file/fileApi";
+import BackButton from "@/components/shared/BackButton";
 
 const LectureCreate = ({ id }: { id: string }) => {
   const initialValues = {
     title: "",
     video_url: "",
-    pdf_urls: [""],
+    pdfs: [],
     isFreePreview: false,
     isPublished: false,
   };
 
-  const [createLecture] = useCreateLectureMutation(undefined);
+  const [createLecture] = useCreateLectureMutation();
+  const [multiUploadFile] = useMultiUploadFileMutation();
   const router = useRouter();
 
   const validationSchema = Yup.object({
@@ -26,17 +28,30 @@ const LectureCreate = ({ id }: { id: string }) => {
     video_url: Yup.string()
       .url("Invalid URL")
       .required("Video URL is required"),
-    pdf_urls: Yup.array().of(
-      Yup.string().url("Invalid PDF URL").required("PDF URL is required")
-    ),
+    pdfs: Yup.array()
+      .of(Yup.mixed().required("PDF file is required"))
+      .min(1, "At least one PDF file is required"),
     isFreePreview: Yup.boolean(),
     isPublished: Yup.boolean(),
   });
 
   const handleSubmit = async (values: typeof initialValues) => {
-    const toastId = toast.loading("Creating lecture...");
+    const toastId = toast.loading("Uploading files...");
     try {
-      const lectureData = { ...values, module: id };
+      const formData = new FormData();
+      values.pdfs.forEach((file) => formData.append("files", file));
+
+      const uploadedFiles = await multiUploadFile(formData).unwrap();
+      const pdf_urls = uploadedFiles.urls;
+
+      const lectureData = {
+        title: values.title,
+        video_url: values.video_url,
+        isFreePreview: values.isFreePreview,
+        isPublished: values.isPublished,
+        pdf_urls,
+        module: id,
+      };
       await createLecture(lectureData).unwrap();
 
       toast.success("Lecture created successfully!", { id: toastId });
@@ -48,16 +63,14 @@ const LectureCreate = ({ id }: { id: string }) => {
 
   return (
     <div className="p-6 max-w-md mx-auto bg-white rounded-md shadow-md">
-      <button onClick={() => router.back()} className="">
-        <FaArrowLeft />
-      </button>
+      <BackButton />
       <h1 className="text-xl font-bold mb-4">Create Lecture</h1>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue, values }) => (
           <Form className="space-y-4">
             {/* Title */}
             <div>
@@ -91,44 +104,28 @@ const LectureCreate = ({ id }: { id: string }) => {
               />
             </div>
 
-            {/* PDF URLs */}
+            {/* PDF Upload */}
             <div>
               <label className="block text-gray-700 font-medium">
-                PDF URLs
+                PDF Files
               </label>
-              <FieldArray name="pdf_urls">
-                {({ push, remove, form }) => (
-                  <>
-                    {form.values.pdf_urls.map((_: any, index: number) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <Field
-                          name={`pdf_urls[${index}]`}
-                          className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-md"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => remove(index)}
-                          className="px-3 py-1 bg-red-500 text-white rounded-md"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => push("")}
-                      className="mt-2 px-4 py-2 bg-purple text-white rounded-md hover:bg-purple/80 transition"
-                    >
-                      Add PDF URL
-                    </button>
-                  </>
-                )}
-              </FieldArray>
+              <input
+                type="file"
+                accept=".pdf"
+                multiple
+                onChange={(event) =>
+                  setFieldValue("pdfs", Array.from(event.target.files || []))
+                }
+                className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-md"
+              />
               <ErrorMessage
-                name="pdf_urls"
+                name="pdfs"
                 component="div"
                 className="text-red-500 text-sm mt-1"
               />
+              <div className="mt-2 text-sm text-gray-500">
+                Selected files: {values.pdfs.length}
+              </div>
             </div>
 
             {/* Free Preview */}

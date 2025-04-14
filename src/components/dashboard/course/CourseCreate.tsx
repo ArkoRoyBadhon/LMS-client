@@ -1,16 +1,18 @@
 "use client";
 
+import BackButton from "@/components/shared/BackButton";
 import { useCreateCourseMutation } from "@/lib/features/course/courseApi";
+import { useUploadFileMutation } from "@/lib/features/file/fileApi";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "sonner";
 import * as Yup from "yup";
 
 const CourseCreate = () => {
   const [createCourse] = useCreateCourseMutation();
+  const [uploadFile] = useUploadFileMutation();
   const router = useRouter();
+
   const validationSchema = Yup.object({
     title: Yup.string()
       .min(3, "Title must be at least 3 characters")
@@ -18,9 +20,7 @@ const CourseCreate = () => {
     description: Yup.string()
       .min(10, "Description must be at least 10 characters")
       .required("Description is required"),
-    thumbnail: Yup.string()
-      .url("Enter a valid URL")
-      .required("Thumbnail URL is required"),
+    thumbnail: Yup.mixed().required("Thumbnail is required"),
     price: Yup.number()
       .positive("Price must be positive")
       .required("Price is required"),
@@ -29,7 +29,17 @@ const CourseCreate = () => {
   const handleSubmit = async (values: typeof initialValues) => {
     const toastId = toast.loading("Creating course...");
     try {
-      await createCourse(values).unwrap();
+      let thumbnailUrl = values.thumbnail;
+
+      if (typeof values.thumbnail !== "string") {
+        const formData = new FormData();
+        formData.append("file", values.thumbnail);
+
+        const uploadedFile = await uploadFile(formData).unwrap();
+        thumbnailUrl = uploadedFile?.url;
+      }
+
+      await createCourse({ ...values, thumbnail: thumbnailUrl }).unwrap();
       toast.success("Course created successfully!", { id: toastId });
       router.push("/dashboard");
     } catch (error) {
@@ -47,16 +57,14 @@ const CourseCreate = () => {
 
   return (
     <div className="p-6 max-w-md mx-auto bg-white rounded-md shadow-md">
-      <Link href={`/dashboard`}>
-        <FaArrowLeft />
-      </Link>
+      <BackButton />
       <h1 className="text-xl mt-2 font-bold mb-4">Create Course</h1>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
+        {({ setFieldValue, isSubmitting }) => (
           <Form className="space-y-4">
             <div>
               <label className="block text-gray-700 font-medium">Title</label>
@@ -91,11 +99,15 @@ const CourseCreate = () => {
 
             <div>
               <label className="block text-gray-700 font-medium">
-                Thumbnail URL
+                Thumbnail
               </label>
-              <Field
-                type="text"
-                name="thumbnail"
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0];
+                  setFieldValue("thumbnail", file || "");
+                }}
                 className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-md"
               />
               <ErrorMessage

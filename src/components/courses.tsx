@@ -12,7 +12,7 @@ const CoursesComponent = () => {
   }
   if (isSuccess) {
     return (
-      <div>
+      <>
         {data?.data.map((item: ICourse, index: number) => {
           return (
             <div
@@ -40,7 +40,7 @@ const CoursesComponent = () => {
             </div>
           );
         })}
-      </div>
+      </>
     );
   }
   return;

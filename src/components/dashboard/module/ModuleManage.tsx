@@ -12,12 +12,7 @@ const ModuleManage = ({ id }: { id: string }) => {
     setPurpose(queryPurpose);
   }, []);
 
-  return (
-    <div>
-      Module ID: {id}, Purpose: {purpose || "Loading..."}
-      {purpose === "create" && <ModuleCreate id={id} />}
-    </div>
-  );
+  return <div>{purpose === "create" && <ModuleCreate id={id} />}</div>;
 };
 
 export default ModuleManage;

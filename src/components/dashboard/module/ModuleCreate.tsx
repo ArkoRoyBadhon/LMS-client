@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { toast } from "sonner";
 import { useCreateModuleMutation } from "@/lib/features/module-lecture/module-lectureApi";
 import { useRouter } from "next/navigation";
+import BackButton from "@/components/shared/BackButton";
 
 const ModuleCreate = ({ id }: { id: string }) => {
   const initialValues = {
@@ -37,6 +38,7 @@ const ModuleCreate = ({ id }: { id: string }) => {
 
   return (
     <div className="p-6 max-w-md mx-auto bg-white rounded-md shadow-md">
+      <BackButton />
       <h1 className="text-xl font-bold mb-4">Create Module</h1>
       <Formik
         initialValues={initialValues}

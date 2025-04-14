@@ -1,14 +1,13 @@
 "use client";
 
 import Loader from "@/components/Loader";
+import BackButton from "@/components/shared/BackButton";
 import {
   useGetSingleCourseQuery,
   useUpdateCourseMutation,
 } from "@/lib/features/course/courseApi";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "sonner";
 import * as Yup from "yup";
 
@@ -61,9 +60,7 @@ const CourseUpdate = ({ id }: { id: string }) => {
 
   return (
     <div className="p-6 max-w-md mx-auto bg-white rounded-md shadow-md">
-      <Link href={`/dashboard/manage/${id}`}>
-        <FaArrowLeft />
-      </Link>
+      <BackButton />
       <h1 className="text-xl  mt-2 font-bold mb-4">Update Course</h1>
       <Formik
         initialValues={initialValues}
