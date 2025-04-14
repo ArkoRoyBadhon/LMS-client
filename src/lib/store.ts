@@ -23,7 +23,7 @@ const persistAuthReducer = persistReducer(persistConfig, authReducer);
 const store = configureStore({
   reducer: {
     [api.reducerPath]: api.reducer,
-    auth: persistAuthReducer, // Renamed `user` to `auth` for better consistency
+    auth: persistAuthReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
@@ -38,5 +38,6 @@ const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export type AppStore = typeof store;
 
 export { store, persistor };

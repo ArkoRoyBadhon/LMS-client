@@ -1,10 +1,11 @@
 import CourseDetail from "@/components/course-details/CourseDetail";
 
-const page = ({ params }: { params: { projectId: string } }) => {
+const page = async ({ params }: { params: Promise<{ projectId: string }> }) => {
+  const { projectId } = await params;
   return (
     <section>
       <div className="mainContainer py-12">
-        <CourseDetail id={params?.projectId} />
+        <CourseDetail id={projectId} />
       </div>
     </section>
   );

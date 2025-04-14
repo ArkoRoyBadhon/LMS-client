@@ -1,5 +1,4 @@
 "use client";
-
 import { useGetSingleCourseQuery } from "@/lib/features/course/courseApi";
 import React from "react";
 import Loader from "../Loader";
@@ -27,17 +26,16 @@ const CheckoutComponent = ({ id }: { id: string }) => {
   const handleEnrollment = async () => {
     const toastId = toast.loading("Please wait...");
     try {
-      const res = (await createEnrollment({
+      const res = await createEnrollment({
         course: id,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      })) as any;
-
-      console.log("eeeee", res);
+      });
 
       if (res?.data?.success) {
         toast.success("Enrollment successful", { id: toastId });
         router.push("/dashboard");
       } else {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
         toast.error(res?.error?.data?.message, { id: toastId });
       }
     } catch {
