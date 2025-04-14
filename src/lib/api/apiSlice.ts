@@ -7,7 +7,8 @@ import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { logout } from "../features/auth/AuthSlice";
 import { useRouter } from "next/navigation";
 
-export const baseUrl = "http://localhost:5000/api/v1";
+// export const baseUrl = "http://localhost:5000/api/v1";
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 type ExtraOptionsWithRouter = {
   router?: ReturnType<typeof useRouter>;
