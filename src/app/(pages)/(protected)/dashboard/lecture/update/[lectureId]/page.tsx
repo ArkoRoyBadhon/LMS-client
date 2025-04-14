@@ -5,7 +5,7 @@ const page = ({ params }: { params: { lectureId: string } }) => {
   return (
     <div>
       <section>
-        <div className="mainContainer py-[40px]">
+        <div className="mainContainer py-[40px] min-h-[calc(100vh-200px)]">
           <LectureUpdate id={params?.lectureId} />
         </div>
       </section>

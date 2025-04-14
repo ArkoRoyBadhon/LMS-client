@@ -7,7 +7,7 @@ const Dashboard = () => {
   const user = useAppSelector((state) => state.auth.user);
   return (
     <section>
-      <div className="mainContainer">
+      <div className="mainContainer min-h-[calc(100vh-200px)]">
         {user?.role === "ADMIN" ? (
           <>
             <h2 className="text-darkest font-semibold text-[24px] py-8">

@@ -5,12 +5,12 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { logout } from "../features/auth/AuthSlice";
-import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 export const baseUrl = "http://localhost:5000/api/v1";
 
 type ExtraOptionsWithRouter = {
-  router?: Router;
+  router?: ReturnType<typeof useRouter>;
 };
 
 const baseQueryWithReauth: BaseQueryFn<
@@ -25,15 +25,10 @@ const baseQueryWithReauth: BaseQueryFn<
   })(args as FetchArgs, api, extraOptions);
 
   if (result.error?.status === 401) {
-    await fetchBaseQuery({
-      baseUrl: baseUrl,
-      credentials: "include",
-    })({ url: "/auth/logout", method: "POST" } as FetchArgs, api, extraOptions);
-
     api.dispatch(logout());
 
-    if (extraOptions?.router) {
-      extraOptions.router.push("/login");
+    if (typeof window !== "undefined" && extraOptions?.router) {
+      extraOptions.router.replace("/login");
     }
   }
 

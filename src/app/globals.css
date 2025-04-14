@@ -39,7 +39,7 @@ body {
 
 @layer base {
   .mainContainer {
-    @apply max-w-[1440px] mx-auto px-[120px];
+    @apply max-w-[1440px] mx-auto px-[20px] lg:px-[120px];
   }
 
   .smoothy {
@@ -47,6 +47,6 @@ body {
   }
 
   .navItem {
-    @apply text-[18px] font-semibold hover:text-text;
+    @apply text-[14px] md:text-[18px] font-semibold hover:text-text;
   }
 }

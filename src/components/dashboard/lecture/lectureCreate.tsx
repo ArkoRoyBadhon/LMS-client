@@ -28,9 +28,7 @@ const LectureCreate = ({ id }: { id: string }) => {
     video_url: Yup.string()
       .url("Invalid URL")
       .required("Video URL is required"),
-    pdfs: Yup.array()
-      .of(Yup.mixed().required("PDF file is required"))
-      .min(1, "At least one PDF file is required"),
+    pdfs: Yup.array().of(Yup.mixed().required("PDF file is required")),
     isFreePreview: Yup.boolean(),
     isPublished: Yup.boolean(),
   });

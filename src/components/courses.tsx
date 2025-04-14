@@ -2,7 +2,7 @@
 import { useGetCoursesQuery } from "@/lib/features/course/courseApi";
 import Loader from "./Loader";
 import Image from "next/image";
-import { ICourse } from "@/Types/EnrollmentType";
+import { ICourse2 } from "@/Types/EnrollmentType";
 import Link from "next/link";
 
 const CoursesComponent = () => {
@@ -13,7 +13,7 @@ const CoursesComponent = () => {
   if (isSuccess) {
     return (
       <>
-        {data?.data.map((item: ICourse, index: number) => {
+        {data?.data.map((item: ICourse2, index: number) => {
           return (
             <div
               key={index}
@@ -34,7 +34,7 @@ const CoursesComponent = () => {
                     <span className="">{item.price}$</span>
                   </p>
                   <hr className="my-2" />
-                  <p className="">{item.description}</p>
+                  <p className="line-clamp-3">{item.description}</p>
                 </div>
               </Link>
             </div>

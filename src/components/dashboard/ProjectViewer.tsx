@@ -10,6 +10,7 @@ import { BiChevronDown, BiChevronUp, BiSearch } from "react-icons/bi";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import { toast } from "sonner";
 import Loader from "../Loader";
+import Link from "next/link";
 
 const ProjectViewer = ({ id }: { id: string }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -99,8 +100,8 @@ const ProjectViewer = ({ id }: { id: string }) => {
       <h2 className="text-[24px] font-semibold capitalize">
         {data?.data?.course?.title}
       </h2>
-      <div className="flex gap-4">
-        <div className="w-2/3 h-[calc(100vh-160px)]">
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="lg:w-2/3 h-[calc(100vh-160px)]">
           {openLecture ? (
             <>
               <h3 className="font-semibold text-lg pb-2">
@@ -114,7 +115,7 @@ const ProjectViewer = ({ id }: { id: string }) => {
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
-                className="w-full h-[calc(100vh-260px)] rounded-md"
+                className="w-full h-[calc(100vh-260px)] rounded-md border border-gray-300"
                 allowFullScreen
               ></iframe>
               <div className="flex justify-end mt-4 text-white">
@@ -132,7 +133,7 @@ const ProjectViewer = ({ id }: { id: string }) => {
           )}
         </div>
 
-        <div className="w-1/3 bg-gray-200 min-h-[400px] h-[calc(100vh-160px)] rounded-md p-6 overflow-auto">
+        <div className="lg:w-1/3 bg-gray-200 min-h-[400px] h-[calc(100vh-160px)] rounded-md p-6 overflow-auto">
           <h3 className="font-semibold text-lg mb-4">All Lectures</h3>
           <h4 className="">
             Progress: {accessibleVideoCount} / {totalVideo}
@@ -165,7 +166,7 @@ const ProjectViewer = ({ id }: { id: string }) => {
                 .length > 0 ? (
                 modules
                   .filter((module: IModule) => module.lectures.length > 0)
-                  .map((module: IModule) => (
+                  .map((module: IModule, index: number) => (
                     <div key={module._id} className="my-4">
                       <button
                         className={`font-semibold text-left w-full p-2  rounded-md flex justify-between capitalize items-center ${
@@ -177,7 +178,7 @@ const ProjectViewer = ({ id }: { id: string }) => {
                         }`}
                         onClick={() => toggleModule(module._id)}
                       >
-                        {module.title}
+                        {index + 1} - {module.title}
                         {openModules.includes(module._id) ? (
                           <BiChevronUp />
                         ) : (
@@ -196,27 +197,63 @@ const ProjectViewer = ({ id }: { id: string }) => {
                           {module.lectures.map((lecture: ILecture) => (
                             <li
                               key={lecture._id}
-                              className={`cursor-pointer hover:underline px-4 py-2 rounded-md flex justify-between ${
+                              className={`cursor-pointer  px-4 py-2 rounded-md  ${
                                 openLecture?._id === lecture._id
                                   ? "bg-primary/50"
                                   : ""
                               }`}
-                              onClick={() =>
-                                data.data.accessibleVideos.includes(lecture._id)
-                                  ? setOpenLecture(lecture)
-                                  : toast.warning(
-                                      "You don't have access to this video"
-                                    )
-                              }
                             >
-                              {lecture.title}
-                              {data.data.accessibleVideos.includes(
-                                lecture._id
-                              ) ? (
-                                <FaLockOpen />
-                              ) : (
-                                <FaLock />
-                              )}
+                              <div
+                                onClick={() =>
+                                  data.data.accessibleVideos.includes(
+                                    lecture._id
+                                  )
+                                    ? setOpenLecture(lecture)
+                                    : toast.warning(
+                                        "You don't have access to this video"
+                                      )
+                                }
+                                className="flex justify-between hover:underline"
+                              >
+                                {lecture.title}
+                                {data.data.accessibleVideos.includes(
+                                  lecture._id
+                                ) ? (
+                                  <FaLockOpen />
+                                ) : (
+                                  <FaLock />
+                                )}
+                              </div>
+                              <div className="flex flex-col">
+                                {lecture?.pdf_urls.map(
+                                  (pdf: string, i: number) => (
+                                    <div
+                                      key={pdf}
+                                      className="flex justify-between items-center"
+                                    >
+                                      <p>PDF {i + 1}</p>
+                                      <div className="flex gap-4">
+                                        <Link
+                                          href={pdf}
+                                          target="_blank"
+                                          download={pdf}
+                                          className="text-primary hover:underline"
+                                        >
+                                          Download
+                                        </Link>
+
+                                        <Link
+                                          href={`/pdf-view/?pdf=${pdf}`}
+                                          target="_blank"
+                                          className="text-primary hover:underline"
+                                        >
+                                          View
+                                        </Link>
+                                      </div>
+                                    </div>
+                                  )
+                                )}
+                              </div>
                             </li>
                           ))}
                         </ul>

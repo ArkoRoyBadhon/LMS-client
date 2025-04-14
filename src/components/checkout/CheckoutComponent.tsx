@@ -7,7 +7,6 @@ import Image from "next/image";
 import { useCreateEnrollmentMutation } from "@/lib/features/enrollment/EnrollmentApi";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { THttpError, THttpResponse } from "@/Types/ResponseError";
 
 const CheckoutComponent = ({ id }: { id: string }) => {
   const { data, isLoading, error } = useGetSingleCourseQuery(id);
@@ -28,19 +27,14 @@ const CheckoutComponent = ({ id }: { id: string }) => {
   const handleEnrollment = async () => {
     const toastId = toast.loading("Please wait...");
     try {
-      const res = (await createEnrollment({ course: id })) as
-        | THttpError
-        | THttpResponse
-        | {
-            error: {
-              data: {
-                message: string;
-              };
-            };
-            success?: boolean;
-          };
+      const res = (await createEnrollment({
+        course: id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      })) as any;
 
-      if (res?.success) {
+      console.log("eeeee", res);
+
+      if (res?.data?.success) {
         toast.success("Enrollment successful", { id: toastId });
         router.push("/dashboard");
       } else {

@@ -12,7 +12,7 @@ export interface IEnrollmentData {
   accessibleVideos: string[];
 }
 
-export interface ICourse {
+export interface ICourse2 {
   _id: string;
   title: string;
   thumbnail: string;
@@ -45,3 +45,17 @@ export interface ILecture {
   isFreePreview: boolean;
   isPublished: boolean;
 }
+
+
+export interface IEnrollment {
+  _id: string;
+  user: string;
+  course: ICourse2;
+  status: string;
+  accessibleVideos: string[];
+  isCompleted: boolean;
+  enrolledAt: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};

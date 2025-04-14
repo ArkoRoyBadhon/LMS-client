@@ -84,37 +84,47 @@ const ManageModuleLecture = ({ id }: { id: string }) => {
             onClick={() => router.push(`/dashboard/course/update/${id}`)}
             className="px-4 py-2 outline outline-primary text-primary hover:bg-primary hover:text-white rounded-md flex items-center gap-2 smoothy cursor-pointer"
           >
-            <FaEdit /> Edit Course
+            <FaEdit /> <span className="hidden lg:block">Edit Course</span>
           </button>
           <button
             onClick={() => handleDelete()}
             className=" px-4 py-2 bg-danger hover:bg-danger/80 text-white rounded-md flex items-center gap-2 cursor-pointer"
           >
-            <FaTrash /> Delete
+            <FaTrash /> <span className="hidden lg:block">Delete</span>
           </button>
         </div>
       </div>
 
       <div className="space-y-6">
-        {course?.modules?.map((module: IModule) => (
+        {course?.modules?.map((module: IModule, index: number) => (
           <div
             key={module._id}
             className="bg-white p-4 rounded-md shadow-md  border-[1px] border-gray-100"
           >
             <div className="flex justify-between items-start">
-              <h3 className="text-lg font-semibold">
-                {module.title} {module.isPublished ? "(Published)" : "(Draft)"}
-              </h3>
+              <div className="">
+                <h3 className="text-lg font-semibold">
+                  {module.title}{" "}
+                  {module.isPublished ? "(Published)" : "(Draft)"}
+                </h3>
+                <p className="text-[14px]">Number: {index + 1}</p>
+              </div>
               <div className=" flex flex-col gap-2">
                 <Link
                   href={`/dashboard/lecture/create/${module?._id}`}
-                  className="px-4 py-2 bg-purple hover:bg-purple/80 text-white rounded-md flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 bg-purple hover:bg-purple/80 text-white rounded-md flex items-center gap-2 cursor-pointer text-[12px] lg:text-[14px]"
                 >
                   <FaPlus /> Add Lecture
                 </Link>
+                <Link
+                  href={`/dashboard/module/${module._id}?purpose=update`}
+                  className="px-4 py-2 bg-purple hover:bg-purple/80 text-white rounded-md flex items-center gap-2 cursor-pointer text-[12px] lg:text-[14px]"
+                >
+                  <FaEdit /> Update Module
+                </Link>
                 <button
                   onClick={() => handleDeleteModule(module._id)}
-                  className="px-4 py-2 bg-danger hover:bg-danger/80 text-white rounded-md flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 bg-danger hover:bg-danger/80 text-white rounded-md flex items-center gap-2 cursor-pointer text-[12px] lg:text-[14px]"
                 >
                   <FaTrash /> Delete Module
                 </button>
@@ -187,7 +197,7 @@ const ManageModuleLecture = ({ id }: { id: string }) => {
         ))}
         <Link
           href={`/dashboard/module/${id}?purpose=create`}
-          className="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-md flex items-center gap-2 cursor-pointer w-fit"
+          className="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-md flex items-center gap-2 cursor-pointer w-fit text-[12px] lg:text-[14px]"
         >
           <FaPlus /> Add Module
         </Link>

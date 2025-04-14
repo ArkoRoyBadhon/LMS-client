@@ -3,10 +3,9 @@ import React from "react";
 
 const page = () => {
   return (
-    <div>
-      <h1>Course Create</h1>
+    <section className="min-h-[calc(100vh-200px)] mainContainer py-[40px]">
       <CourseCreate />
-    </div>
+    </section>
   );
 };
 

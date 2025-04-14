@@ -32,16 +32,17 @@ const Login = () => {
         const res = await loginUser(values);
 
         if (res.data.success) {
+          console.log("login data", res.data.data);
+
           dispatch(setUser(res.data.data));
 
           toast.success("Login Successfully!", {
-            duration: 2000,
             id: toastId,
           });
           router.push("/");
         }
       } catch {
-        toast.error("Something went wrong!", { duration: 2000, id: toastId });
+        toast.error("Something went wrong!", { id: toastId });
       }
     },
   });

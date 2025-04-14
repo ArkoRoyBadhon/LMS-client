@@ -27,6 +27,7 @@ const authApi = api.injectEndpoints({
           credentials: "include",
         };
       },
+      invalidatesTags: ["user"],
     }),
     getUser: builder.query({
       query: () => {
@@ -36,7 +37,8 @@ const authApi = api.injectEndpoints({
           credentials: "include",
         };
       },
-    })
+      providesTags: ["user"],
+    }),
   }),
 });
 
@@ -44,5 +46,5 @@ export const {
   useRegisterMutation,
   useLoginUserMutation,
   useLogoutUserMutation,
-  useGetUserQuery
+  useGetUserQuery,
 } = authApi;

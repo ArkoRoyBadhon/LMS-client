@@ -2,7 +2,7 @@
 import { useUserPersonalQuery } from "@/lib/features/enrollment/EnrollmentApi";
 import Link from "next/link";
 import Image from "next/image";
-import { ICourse } from "@/Types/EnrollmentType";
+import { IEnrollment } from "@/Types/EnrollmentType";
 import Loader from "./Loader";
 
 const AllCoursesByUser = () => {
@@ -18,9 +18,7 @@ const AllCoursesByUser = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[20px] py-[20px]">
-      {data.data.map((item: ICourse, index: number) => {
-        console.log("item", item);
-
+      {data.data.map((item: IEnrollment, index: number) => {
         return (
           <div
             key={index}
@@ -29,22 +27,22 @@ const AllCoursesByUser = () => {
             <Link href={`/dashboard/${item._id}`}>
               <div>
                 <Image
-                  src={item.thumbnail || "/tiger.jpg"}
+                  src={item?.course?.thumbnail || "/tiger.jpg"}
                   className="w-full h-[200px] object-cover"
                   height={200}
                   width={240}
-                  alt={item.title || "Course Image"}
+                  alt={item.course?.title || "Course Image"}
                 />
                 <div className="py-6 px-4">
                   <h4 className="font-semibold">
-                    {item.title || "Course Title"}
+                    {item.course?.title || "Course Title"}
                   </h4>
                   <p className="mt-2">
                     <strong>Price: </strong>
-                    <span>{item.price ? `$${item.price}` : "Free"}</span>
+                    <span>{item.course?.price} $</span>
                   </p>
-                  <p className="mt-2 text-gray-600 text-sm">
-                    {item.description ||
+                  <p className="mt-2 text-gray-600 text-sm line-clamp-2">
+                    {item.course?.description ||
                       "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sint, asperiores."}
                   </p>
                 </div>
